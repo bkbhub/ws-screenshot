@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 var hardcodedAPIKey = require("../../appconfig.json").ApiKey;
 const tools = require('../shared.js');
 
@@ -13,14 +13,14 @@ exports.handler = async (event, context, callback) => {
 
     var sharedmem = context.sharedmem;
     var beginPipeline = process.hrtime();
-    
+
     if ( hardcodedAPIKey != "" && event.queryStringParameters.apiKey != hardcodedAPIKey ){
         callback(null, {
             status: 400,
             content: "Invalid API Key"
         });
         return;
-    }   
+    }
 
     while ( sharedmem.getInteger("nbPuppeteerProcess") >= maxConcurrency ){
         await tools.sleep(20);
@@ -44,8 +44,8 @@ exports.handler = async (event, context, callback) => {
 
     //var screenshotResult = await tools.screnshotForUrl(url, isFullPage, resX, resY, outFormat);
     var screenshotResult = null;
-    
-    try{    
+
+    try{
         screenshotResult = await tools.screnshotForUrlTab(url, isFullPage, resX, resY, outFormat, waitTime);
     }
     catch(ex){
@@ -63,11 +63,11 @@ exports.handler = async (event, context, callback) => {
             data: "",
             mimeType: ""
         }
-    }   
+    }
 
     callback(null, {
             status: 200,
-            content: screenshotResult.data, 
+            content: screenshotResult.data,
             details: screenshotResult.details,
             headers:{
                 "execTime": durationMS.toFixed(2) + "ms",

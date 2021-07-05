@@ -1,1 +1,1 @@
-docker build -t elestio/ws-screenshot.slim .
+docker buildx build --platform linux/amd64,linux/arm64 -t bkbhub/screenshot-arm --push .
