@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 
 var browser = null;
-module.exports.screnshotForUrlTab = async function (url, isfullPage, resX, resY, outFormat, waitTime) {
+module.exports.screnshotForUrlTab = async function (url, isfullPage, resX, resY, outFormat, waitTime, deviceScaleFactor) {
     return new Promise(async function (resolve, reject) {
 
         try{
@@ -19,9 +19,9 @@ module.exports.screnshotForUrlTab = async function (url, isfullPage, resX, resY,
         try{
 
             if ( browser == null){
-                browser = await puppeteer.launch({args: ['--no-sandbox']});
+                browser = await puppeteer.launch({args: ['--no-sandbox', '--start-maximized'], defaultViewport: null});
             }
-            
+
             //const browser = await puppeteer.launch({args: ['--no-sandbox']});
             const page = await browser.newPage();
             await page.goto(url);
@@ -30,20 +30,20 @@ module.exports.screnshotForUrlTab = async function (url, isfullPage, resX, resY,
                 width: parseInt(resX),
                 height: parseInt(resY),
                 isMobile: false,
-                deviceScaleFactor: 1,
+                deviceScaleFactor: parseInt(deviceScaleFactor),
             });
 
             //scroll the whole page for lazy loading
             if (isfullPage){
                 await autoScroll(page);
             }
-            
+
             //wait for the page to be fully loaded - max 1000ms wait
             try{
                 await page.waitForNavigation({waitUntil: 'networkidle2', timeout: waitTime});
             } catch(ex){
             }
-            
+
             var finalType = "jpg";
             var finalMime = "image/jpeg";
 
@@ -60,14 +60,14 @@ module.exports.screnshotForUrlTab = async function (url, isfullPage, resX, resY,
                 finalMime = "application/pdf";
             }
 
-            var optionsPup = { 
-                type: finalType, 
+            var optionsPup = {
+                type: finalType,
                 encoding: 'binary',
                 fullPage: isfullPage
             };
 
             if ( finalType == "jpeg" ){
-                optionsPup.quality = 88;
+                optionsPup.quality = 100;
             }
 
             if ( finalType != "pdf" ){
@@ -76,18 +76,18 @@ module.exports.screnshotForUrlTab = async function (url, isfullPage, resX, resY,
             else{
                 buffer = await page.pdf({printBackground: true, scale: 1, format: 'A4'});
             }
-            
+
             //await browser.close();
             await page.close();
 
-            let mimeType = finalMime;            
+            let mimeType = finalMime;
             var resp = {
                 mimeType: mimeType,
                 data: buffer
             };
 
             resolve(resp);
-            
+
         }
         catch(ex){
             console.log("Error while taking screenshot: " + ex.message);
@@ -120,7 +120,7 @@ async function CleanMem(){
     }
 }
 
-module.exports.screnshotForUrl = async function (url, isfullPage, resX, resY, outFormat, waitTime) {
+module.exports.screnshotForUrl = async function (url, isfullPage, resX, resY, outFormat, waitTime, deviceScaleFactor) {
     return new Promise(async function (resolve, reject) {
 
         try{
@@ -143,17 +143,17 @@ module.exports.screnshotForUrl = async function (url, isfullPage, resX, resY, ou
 
             var errorContent = "";
             await page.goto(url).catch(e => errorContent = e);
-            
+
             //display error in the image
             if ( errorContent != "" ){
                 page.setContent("<pre>" + errorContent.stack + "</pre>");
-            } 
+            }
 
             await page.setViewport({
                 width: parseInt(resX),
                 height: parseInt(resY),
                 isMobile: false,
-                deviceScaleFactor: 1,
+                deviceScaleFactor: parseInt(deviceScaleFactor),
             });
 
             //scroll the whole page for lazy loading
@@ -165,7 +165,7 @@ module.exports.screnshotForUrl = async function (url, isfullPage, resX, resY, ou
             } catch(ex){
 
             }
-            
+
             var finalType = "jpg";
             var finalMime = "image/jpeg";
 
@@ -182,22 +182,22 @@ module.exports.screnshotForUrl = async function (url, isfullPage, resX, resY, ou
                 finalMime = "application/pdf";
             }
 
-            buffer = await page.screenshot({ 
-                type: finalType, 
-                quality: 84, 
+            buffer = await page.screenshot({
+                type: finalType,
+                quality: 100,
                 encoding: 'binary',
                 fullPage: isfullPage
             });
             await browser.close();
 
-            let mimeType = finalMime;            
+            let mimeType = finalMime;
             var resp = {
                 mimeType: mimeType,
                 data: buffer
             };
 
             resolve(resp);
-            
+
         }
         catch(ex){
             console.log("Error while taking screenshot: " + ex.message);
@@ -242,4 +242,4 @@ module.exports.sleep = function (ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
-}   
+}

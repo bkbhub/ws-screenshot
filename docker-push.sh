@@ -1,1 +1,1 @@
-docker push elestio/ws-screenshot.slim:latest
+docker push bkbhub/screenshot-arm:latest

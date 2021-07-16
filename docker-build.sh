@@ -1,1 +1,1 @@
-docker build -t elestio/ws-screenshot.slim .
+docker build -t bkbhub/screenshot-arm .

@@ -9,14 +9,14 @@ DEMO: https://backup15.terasp.net/
 
 # Quickstart with Docker
 
-Run once: 
+Run once:
 
-    docker pull elestio/ws-screenshot.slim
-    docker run -p 3000:3000 -it elestio/ws-screenshot.slim
+    docker pull bkbhub/screenshot-arm
+    docker run -p 3000:3000 -it bkbhub/screenshot-arm
 
 or Run as a docker service:
 
-    docker run --name ws-screenshot -d --restart always -p 3000:3000 -it elestio/ws-screenshot.slim
+    docker run --name ws-screenshot -d --restart always -p 3000:3000 -it bkbhub/screenshot-arm
 
 Then open http://yourIP:3000/ in your browser
 
@@ -46,7 +46,7 @@ Clone this repo then install NPM dependencies for ws-screenshot:
     npm install
 
 ## Install required dependencies for chrome:
-    
+
     ./installPuppeteerNativeDeps.sh
 
 
@@ -57,7 +57,7 @@ Clone this repo then install NPM dependencies for ws-screenshot:
 ## Run directly
 
 Finally we can start WS-SCREENSHOT Server one-time:
-    
+
     ./run.sh
 
 or run as a service with pm2
@@ -87,20 +87,20 @@ Run with helm
 ## REST API
 
 Make a GET request (or open the url in your browser):
-    
+
     /api/screenshot?resX=1280&resY=900&outFormat=jpg&isFullPage=false&url=https://vms2.terasp.net
 
 ## Websocket API
 
 ```js
-var event = { 
-  cmd: "screenshot", 
-  url: url, 
-  originalTS: (+new Date()), 
-  resX: resX, 
-  resY: resY, 
-  outFormat: outFormat, 
-  isFullPage: isFullPage 
+var event = {
+  cmd: "screenshot",
+  url: url,
+  originalTS: (+new Date()),
+  resX: resX,
+  resY: resY,
+  outFormat: outFormat,
+  isFullPage: isFullPage
 };
 ```
 
@@ -129,10 +129,10 @@ To call the REST API with an ApiKey:
 To call the Websocket API with an ApiKey:
 
 ```js
-var event = { 
-  cmd: "screenshot", 
-  url: url, 
-  originalTS: (+new Date()), 
+var event = {
+  cmd: "screenshot",
+  url: url,
+  originalTS: (+new Date()),
   apiKey: "XXXXXXXXXXXXX"
 };
 ```
@@ -143,4 +143,3 @@ You can check /public/js/client.js for a sample on how to call the Websocket API
 # TODO list
 - Add wait duration as a param (some sites need more time to load all resources)
 - Add support for cookies / localstorage auth (to be able to screenshot authenticated pages)
-
