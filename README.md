@@ -11,12 +11,12 @@ DEMO: https://backup15.terasp.net/
 
 Run once: 
 
-    docker pull elestio/ws-screenshot.slim
-    docker run -p 3000:3000 -it elestio/ws-screenshot.slim
+    docker pull bkbhub/screenshot
+    docker run -p 3000:3000 -it bkbhub/screenshot
 
 or Run as a docker service:
 
-    docker run --name ws-screenshot -d --restart always -p 3000:3000 -it elestio/ws-screenshot.slim
+    docker run --name ws-screenshot -d --restart always -p 3000:3000 -it bkbhub/screenshot
 
 Then open http://yourIP:3000/ in your browser
 

@@ -4,7 +4,7 @@
   "title": "WS-Screenshot",
   "description": "Screenshot Service",
   "mainDomain": "screenshot.elest.io",
-  "domains": ["*","screenshot.elest.io"], 
+  "domains": ["*","screenshot.elest.io"],
   "publicFolder": "./public",
   "TypeAPI": "LOCAL",
   "TypeFS": "LOCAL",
@@ -12,7 +12,7 @@
   "CORS": {
       "access-control-allow-origin": "*"
   },
-  "maxRequestsPerMinutePerIP": 120,
+  "maxRequestsPerMinutePerIP": 12000,
   "banDurationSeconds": 60,
   "apiEndpoints": {
     "/api/screenshot" : {
