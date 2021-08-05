@@ -47,7 +47,7 @@ exports.handler = async (event, context, callback) => {
     var screenshotResult = null;
 
     try{
-        screenshotResult = await tools.screnshotForUrlTab(url, isFullPage, resX, resY, outFormat, waitTime);
+        screenshotResult = await tools.screnshotForUrlTab(url, isFullPage, resX, resY, outFormat, waitTime, quality);
     }
     catch(ex){
         //do nothing
@@ -68,7 +68,7 @@ exports.handler = async (event, context, callback) => {
 
     callback(null, {
             status: 200,
-            content: screenshotResult.data,
+            content: screenshotResult.data.toString('base64'),
             details: screenshotResult.details,
             headers:{
                 "execTime": durationMS.toFixed(2) + "ms",
