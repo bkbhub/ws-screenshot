@@ -42,28 +42,38 @@ exports.handler = async (event, context, callback) => {
     var outFormat = "jpg"; if ( event.queryStringParameters.outFormat != null ) { outFormat = event.queryStringParameters.outFormat; }
     var waitTime = 100; if ( event.queryStringParameters.waitTime != null ) { waitTime = event.queryStringParameters.waitTime; }
     var quality = 88; if ( event.queryStringParameters.quality != null ) { quality = event.queryStringParameters.quality; }
+    var timeout = 120000; if ( event.queryStringParameters.timeout != null ) { timeout = event.queryStringParameters.timeout; }
 
     //var screenshotResult = await tools.screnshotForUrl(url, isFullPage, resX, resY, outFormat);
     var screenshotResult = null;
 
-    try{
+    try {
+        const frozer = setTimeout(() => {
+            sharedmem.setString("healtherror", "frozen");
+        }, timeout);
         screenshotResult = await tools.screnshotForUrlTab(url, isFullPage, resX, resY, outFormat, waitTime, quality);
+        clearTimeout(frozer);
     }
-    catch(ex){
-        //do nothing
+    catch(ex) {
+        callback(null, {
+            status: 500,
+            content: ex
+        });
+        return;
+    } finally {
+        sharedmem.incInteger("nbPuppeteerProcess", -1);
+        sharedmem.incInteger("nbScreenshots", 1);
     }
-
-    sharedmem.incInteger("nbPuppeteerProcess", -1);
-    sharedmem.incInteger("nbScreenshots", 1);
 
     const nanoSeconds = process.hrtime(beginPipeline).reduce((sec, nano) => sec * 1e9 + nano);
     var durationMS = (nanoSeconds/1000000);
 
-    if ( screenshotResult == null ){
-        screenshotResult = {
-            data: "",
-            mimeType: ""
-        }
+    if ( !screenshotResult?.data ){
+        callback(null, {
+            status: 500,
+            content: "Not processed"
+        });
+        return;
     }
 
     callback(null, {
@@ -74,7 +84,7 @@ exports.handler = async (event, context, callback) => {
                 "execTime": durationMS.toFixed(2) + "ms",
                 "nbPuppeteerProcess": sharedmem.getInteger("nbPuppeteerProcess"),
                 "totalScreenshots": sharedmem.getInteger("nbScreenshots"),
-                "Content-Type": screenshotResult.mimeType
+                "Content-Type": "text/plain"
             }
     });
 

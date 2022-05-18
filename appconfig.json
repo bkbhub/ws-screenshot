@@ -18,6 +18,10 @@
     "/api/screenshot" : {
       "src" : "./API/REST/",
       "handler": "Screenshot.handler"
+    },
+    "/api/healthcheck" : {
+      "src" : "./API/REST/",
+      "handler": "Healthcheck.handler"
     }
   },
   "websocketEndpoints": {
